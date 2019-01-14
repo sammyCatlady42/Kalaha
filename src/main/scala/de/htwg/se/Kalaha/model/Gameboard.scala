@@ -2,7 +2,8 @@ package de.htwg.se.Kalaha.model
 
 case class Gameboard() {
   val SIZE = 14
-  var startboard : Array[Int] = Array[Int] (0, 6, 6, 6, 6, 6, 6, 0, 6, 6, 6, 6, 6, 6)
+  val stones = 6
+  var startboard : Array[Int] = Array[Int] (0, stones, stones, stones, stones, stones, stones, 0, stones, stones, stones, stones, stones, stones)
   var gameboard = new Array[Int] (SIZE)
   var oldgb = new Array[Int] (SIZE)
 

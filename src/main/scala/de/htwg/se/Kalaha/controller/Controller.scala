@@ -45,7 +45,7 @@ class Controller {
     * @param index userinput
     */
   def checkInputIFValid(index: Int): Any = index match {
-    case x if 1 until 7 contains x => true
+    case x if 1 until board.stones+1 contains x => true
     case _ => false
   }
 
@@ -60,21 +60,21 @@ class Controller {
 
 
   def move(index: Int): Unit = {
-    print("index = " + index)
+    print("index = " + index + "\n")
 
     board.oldgb = board.gameboard.clone()
-    val x: Int = board.gameboard(index)
+    val countStonesInMuld: Int = board.gameboard(index)
     board.gameboard(index) = 0
     var v = 0
-    for (i <- 1 until x + 1) {
-      if ((round % 2 == 0 && i == 7) || (round % 2 == 1 && i == 1)) {
-        print("turn: " + round % 2 + " i = " + i + " x = " + x + " skip\n")
+    for (i <- 1 until countStonesInMuld + 1) {
+      if ((round % 2 == 0 && i == board.stones+1) || (round % 2 == 1 && i == 1)) {
+        print("turn: " + round % 2 + " i = " + i + " x = " + countStonesInMuld + " skip\n")
         //v += 1
         if (index + i + 1 >= board.gameboard.length) {
-          val y: Int = index + x - board.gameboard.length
+          val y: Int = index + countStonesInMuld - board.gameboard.length
           board.gameboard(y + 1 + v) += 1
         } else {
-          board.gameboard(index + x + v) += 1
+          board.gameboard(index + countStonesInMuld + v) += 1
         }
       } else {
         if (index + i + 1 >= board.gameboard.length) {
@@ -102,13 +102,13 @@ class Controller {
 
   def win: Int = {
     var x: Int = 0
-    for (i <- 0 until 6) {
+    for (i <- 0 until board.stones) {
       x += board.gameboard(i + 1)
       print(x)
     }
     var y: Int = 0
-    for (i <- 0 until 6)
-      y += board.gameboard(i + 7)
+    for (i <- 0 until board.stones)
+      y += board.gameboard(i + board.stones+1)
 
     if (x == 0) {
       1
