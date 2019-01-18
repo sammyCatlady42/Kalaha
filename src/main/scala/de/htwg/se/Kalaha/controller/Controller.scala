@@ -61,32 +61,31 @@ class Controller {
 
   def move(index: Int): Unit = {
     print("index = " + index + "\n")
-
+    print("Turn = " + round % 2 + "\n")
+    var idx = index
     board.oldgb = board.gameboard.clone()
     val countStonesInMuld: Int = board.gameboard(index)
     board.gameboard(index) = 0
-    var v = 0
     for (i <- 1 until countStonesInMuld + 1) {
-      if ((round % 2 == 0 && i == board.stones+1) || (round % 2 == 1 && i == 1)) {
-        print("turn: " + round % 2 + " i = " + i + " x = " + countStonesInMuld + " skip\n")
-        //v += 1
-        if (index + i + 1 >= board.gameboard.length) {
+      if ((round % 2 == 0 && (index + i) % 14 == 0) || (round % 2 == 1 && (index + i) % 14 == 7)) {
+        //print("turn: " + round % 2 + " i = " + (index + i) + " x = " + countStonesInMuld + " skip\n")
+        if (index + i >= board.gameboard.length) {
           val y: Int = index + countStonesInMuld - board.gameboard.length
-          board.gameboard(y + 1 + v) += 1
+          board.gameboard(y + 1) += 1
         } else {
-          board.gameboard(index + countStonesInMuld + v) += 1
+          board.gameboard(index + countStonesInMuld) += 1
         }
       } else {
-        if (index + i + 1 >= board.gameboard.length) {
+        if (index + i >= board.gameboard.length) {
           val y: Int = index + i - board.gameboard.length
-          board.gameboard(y + 1 + v) += 1
+          board.gameboard(y) += 1
         } else {
-          board.gameboard(index + i + v) += 1
+          board.gameboard(index + i) += 1
         }
       }
     }
     round += 1
-    print(board.toString())
+    //print(board.toString())
   }
 
   def undo: Unit = {
