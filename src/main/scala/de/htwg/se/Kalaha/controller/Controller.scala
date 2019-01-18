@@ -6,48 +6,10 @@ class Controller {
   var round = 0
   var board = new Gameboard
 
-  def controllerInit(): Unit = {
-    board.boardInit
+  def controllerInit(amountStonesStart : Int): Unit = {
+    board.boardInit(amountStonesStart)
   }
 
-  def startGame(): Unit = {
-   // print("Spieler " + player + " ist an der Reihe.")
-
-  }
-
-  def startTurn(): Unit = {
-    print("\nWähle eine Mulde : ")
-    var input = 0
-    try {
-      input = readUserInput()
-    }catch {
-      case e: NumberFormatException =>
-        print("\nBitte richtige Werte angeben.")
-        startTurn()
-    }
-    checkInputIFValid(input) match {
-      case false =>
-        print("\nBitte richtige Werte angeben.")
-        startTurn()
-      case true => move(input)
-    }
-  }
-
-  def readUserInput(): Int = {
-    val a = scala.io.StdIn.readInt()
-    print("The value of a is " + a)
-    a
-  }
-
-  /** *
-    * checkInputIFValid
-    *
-    * @param index userinput
-    */
-  def checkInputIFValid(index: Int): Any = index match {
-    case x if 1 until board.stones+1 contains x => true
-    case _ => false
-  }
 
   //    if (index == 0 || index == 7){
   //      //TODO: error message
@@ -95,9 +57,9 @@ class Controller {
     print(board.toString)
   }
 
-  def reset: Unit = {
-    board.boardInit
-  }
+//  def reset: Unit = {
+//    board.boardInit
+//  }
 
   def win: Int = {
     var x: Int = 0
@@ -107,7 +69,7 @@ class Controller {
     }
     var y: Int = 0
     for (i <- 0 until board.stones)
-      y += board.gameboard(i + board.stones+1)
+      y += board.gameboard(i + board.stones + 1)
 
     if (x == 0) {
       1

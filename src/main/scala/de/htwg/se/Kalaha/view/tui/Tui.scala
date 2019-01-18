@@ -3,6 +3,75 @@ package de.htwg.se.Kalaha.view.tui
 import de.htwg.se.Kalaha.controller.Controller
 
 case class Tui(controller: Controller) {
+
+  def startGame(): Unit = {
+    welcomeMsg()
+    askForAmountStonesStart()
+    print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
+    showGameboard()
+    startTurn()
+    showGameboard()
+  }
+
+  def askForAmountStonesStart(): Unit = {
+    print("\n4 oder 6 Steine? : ")
+    var input = 0
+    try {
+      input = readUserInput()
+    } catch {
+      case e: NumberFormatException =>
+        print("\nBitte richtige Werte angeben.")
+        askForAmountStonesStart()
+    }
+    input match {
+      case 4 => controller.controllerInit(4)
+      case 6 => controller.controllerInit(6)
+    }
+  }
+
+  def startTurn(): Unit = {
+    print("\nWähle eine Mulde : ")
+    var input = 0
+    try {
+      input = readUserInput()
+    } catch {
+      case e: NumberFormatException =>
+        print("\nBitte Zahlenwerte angeben.")
+        startTurn()
+    }
+    checkInputIFValid(input) match {
+      case false =>
+        print("\nBitte richtige Werte angeben.")
+        startTurn()
+      case true => controller.move(input)
+    }
+  }
+
+  def readUserInput(): Int = {
+    val a = scala.io.StdIn.readInt()
+    print("The value of a is " + a)
+    a
+  }
+
+  /** *
+    * checkInputIFValid
+    *
+    * @param index userinput
+    */
+  def checkInputIFValid(index: Int): Any = index match {
+    case x if 1 until 6 + 1 contains x => true
+    case _ => false
+  }
+
+  def welcomeMsg(): Unit ={
+    var s = ""
+    s += "\n"
+    s += "Welcome to Kalaha!! :D\n" +
+      "Spielregeln: ....."
+    //TODO: Helpinfos und spielregeln
+    print(s)
+  }
+
   def showGameboard(): Unit = {
     var board = controller.board
     var s = ""
