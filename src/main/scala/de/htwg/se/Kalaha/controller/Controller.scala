@@ -11,20 +11,17 @@ class Controller() extends Observable{
     board.boardInit(amountStonesStart)
   }
 
-
-  //    if (index == 0 || index == 7){
-  //      //TODO: error message
-  //      print("Bad Input\n")
-  //      for (i <- 0 until board.gameboard.length-1)
-  //        print(board.gameboard(i))
-  //      print("\n")
-  //      return
-  //    }
-
-
-  def move(index: Int): Unit = {
-    //print("index = " + index + "\n")
-    //print("Turn = " + round % 2 + "\n")
+  def move(inputIndex: Int): Unit = {
+    var index = inputIndex
+    print("index = " + index + "\n")
+    val turn = round % 2
+    print("Turn = " + turn + "\n")
+    if(turn == 0){
+      print("Spieler 1")
+    }else{
+      print("Spieler 2")
+      index += 6
+    }
     var idx = index
     var last = 0
     board.oldgb = board.gameboard.clone()
@@ -32,7 +29,7 @@ class Controller() extends Observable{
     //print("Balls = " + countStonesInMuld + "\n")
     board.gameboard(idx) = 0
     for (i <- 1 until countStonesInMuld + 1) {
-      if ((round % 2 == 0 && (idx + i) % 14 == 0) || (round % 2 == 1 && (idx + i) % 14 == 7)) {
+      if ((turn == 0 && (index + i) % 14 == 0) || (turn == 1 && (index + i) % 14 == 7)) {
         //print("turn: " + round % 2 + " i = " + (index + i) + " x = " + countStonesInMuld + " skip\n")
         if (idx + i >= board.gameboard.length) {
           val y: Int = (idx + i - board.gameboard.length) % 14
