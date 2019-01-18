@@ -1,8 +1,9 @@
 package de.htwg.se.Kalaha.controller
 
 import de.htwg.se.Kalaha.model.Gameboard
+import de.htwg.se.Kalaha.observer.Observable
 
-class Controller {
+class Controller() extends Observable{
   var round = 0
   var board = new Gameboard
 
@@ -64,7 +65,7 @@ class Controller {
     if ((round % 2 == 1 && last == 0) || (round % 2 == 0 && last == 7)) {
       //print("New Turn")
       //tui.startTurn()
-      // TODO: new Turn
+      notifyObservers
       round -= 1
     }
     if (board.gameboard(last) == 1) {

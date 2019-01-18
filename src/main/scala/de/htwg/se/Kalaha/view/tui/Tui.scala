@@ -1,8 +1,11 @@
 package de.htwg.se.Kalaha.view.tui
 
 import de.htwg.se.Kalaha.controller.Controller
+import de.htwg.se.Kalaha.observer.Observable
 
-case class Tui(controller: Controller) {
+class Tui(controller: Controller) extends Observable{
+
+  controller.addObserver(this)
 
   def startGame(): Unit = {
     welcomeMsg()
