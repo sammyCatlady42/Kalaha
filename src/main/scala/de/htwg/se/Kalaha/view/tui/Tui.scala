@@ -29,6 +29,9 @@ class Tui(controller: Controller) extends Observable{
     input match {
       case 4 => controller.controllerInit(4)
       case 6 => controller.controllerInit(6)
+      case _ =>
+        print("\nBitte richtige Werte angeben.")
+        askForAmountStonesStart()
     }
   }
 
@@ -66,7 +69,7 @@ class Tui(controller: Controller) extends Observable{
     case _ => false
   }
 
-  def welcomeMsg(): Unit ={
+  def welcomeMsg(): Unit = {
     var s = ""
     s += "\n"
     s += "Welcome to Kalaha!! :D\n" +
@@ -77,14 +80,24 @@ class Tui(controller: Controller) extends Observable{
 
   def showGameboard(): Unit = {
     var board = controller.board
+
+    val gameboardString = new Array[String](14)
+    for (i <- 0 until gameboardString.length) {
+      if (board.gameboard(i) < 10) {
+        gameboardString(i) = " " + board.gameboard(i)
+      }
+      else {
+        gameboardString(i) = "" + board.gameboard(i)
+      }
+    }
     var s = ""
     s += "\n"
     s +=
-      Console.BLUE +"------1---2---3---4---5---6------\n" + Console.RESET +
-      "|   | " + board.gameboard(13) + " | " + board.gameboard(12) + " | " + board.gameboard(11) + " | " + board.gameboard(10) + " | " + board.gameboard(9) + " | " + board.gameboard(8) + " |   |\n" +
-      "| " + board.gameboard(0) + " |-----------------------| " + board.gameboard(7) + " |\n" +
-      "|   | " + board.gameboard(1) + " | " + board.gameboard(2) + " | " + board.gameboard(3) + " | " + board.gameboard(4) + " | " + board.gameboard(5) + " | " + board.gameboard(6) + " |   |\n" +
-      Console.RED +"------1---2---3---4---5---6------\n" + Console.RESET
+      Console.BLUE + "--------6----5----4----3----2----1-------\n" + Console.RESET +
+        Console.BLUE + "|    | " + Console.RESET + gameboardString(13) + " | " + gameboardString(12) + " | " + gameboardString(11) + " | " + gameboardString(10) + " | " + gameboardString(9) + " | " + gameboardString(8) + Console.RED + " |    |\n" + Console.RESET +
+        Console.BLUE + "| " + gameboardString(0) + " |" + Console.RESET + "-----------------------------" + Console.RED + "| " + gameboardString(7) + " |\n" + Console.RESET +
+        Console.BLUE + "|    | " + Console.RESET + gameboardString(1) + " | " + gameboardString(2) + " | " + gameboardString(3) + " | " + gameboardString(4) + " | " + gameboardString(5) + " | " + gameboardString(6) + Console.RED + " |    |\n" + Console.RESET +
+        Console.RED + "--------1----2----3----4----5----6-------\n" + Console.RESET
     print(s)
   }
 
