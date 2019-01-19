@@ -1,7 +1,6 @@
-import de.htwg.se.RolltreppenUndAale.model.Player
-import org.scalatest._
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
+package scala.de.htwg.se.RolltreppenUndAale.model.model
+
+import de.htwg.se.Kalaha.model.Player
 
 @RunWith(classOf[JUnitRunner])
 class PlayerSpec extends WordSpec with Matchers {
@@ -13,7 +12,8 @@ class PlayerSpec extends WordSpec with Matchers {
     "have a nice String representation" in {
       player.toString should be("Your Name")
     }
-  }}
+  }
+  }
 
 
 }

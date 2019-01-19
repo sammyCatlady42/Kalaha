@@ -12,7 +12,7 @@ class Tui(controller: Controller) extends Observable{
     askForAmountStonesStart()
     //print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
     showGameboard()
-    startTurn()
+    navigate()
     showGameboard()
   }
 
@@ -33,6 +33,52 @@ class Tui(controller: Controller) extends Observable{
         print("\nBitte richtige Werte angeben.")
         askForAmountStonesStart()
     }
+  }
+
+  def navigate(): Unit = {
+    val turn = controller.round % 2
+    if (turn == 0) {
+      print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.")
+    } else {
+      print("\nSpieler " + Console.BLUE + "2 " + Console.RESET + "ist an der Reihe.")
+    }
+    print("\nMögliche Eingaben:\n")
+    print("     p => Zug des aktuellen Spielers starten\n")
+    print("     show => Anzeigen des Spielfelds\n")
+    print("     undo => Letzten Zug rückgängig machen\n")
+    print("     redo => Letzten Undo rückgängig machen\n")
+    print("     reset => Spielfeld auf Anfang zurücksetzten\n")
+    print("     exit => Beenden\n")
+    var input = ""
+    try {
+      input = scala.io.StdIn.readLine()
+    } catch {
+      case _ => print("Felher beim lesen")
+    }
+    input match {
+      case "p" => startTurn()
+      case "undo" => {
+        try {
+          controller.undo
+        } catch {
+          case e => print(e)
+        }
+      }
+      case "redo" => {
+        try {
+          controller.redo
+        } catch {
+          case e => print(e)
+        }
+      }
+      case "reset" => controller.reset
+      case "exit" => controller.exit
+      case "show" => showGameboard()
+      case _  => {
+        print("Falsche Eingabe\n")
+      }
+    }
+    navigate()
   }
 
   def startTurn(): Unit = {
@@ -58,7 +104,7 @@ class Tui(controller: Controller) extends Observable{
       case true => controller.move(input)
     }
     showGameboard()
-    startTurn()
+    navigate()
   }
 
   def readUserInput(): Int = {

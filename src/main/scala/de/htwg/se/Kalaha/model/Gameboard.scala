@@ -10,7 +10,7 @@ case class Gameboard() {
   def boardInit(amountStonesStart : Int): Unit = {
     stones = amountStonesStart
     for(i <- 1 until SIZE){
-      print(gameboard(i))
+      //print(gameboard(i))
       if(startboard(i) != 0) startboard(i) = amountStonesStart
     }
     gameboard = startboard.clone()

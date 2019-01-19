@@ -6,8 +6,11 @@ import de.htwg.se.Kalaha.observer.Observable
 class Controller() extends Observable{
   var round = 0
   var board = new Gameboard
+  var amoutStones = 0
+  var undone = true
 
   def controllerInit(amountStonesStart : Int): Unit = {
+    amoutStones = amountStonesStart
     board.boardInit(amountStonesStart)
   }
 
@@ -48,12 +51,9 @@ class Controller() extends Observable{
       }
     }
     checkWin
+    undone = false
     checkExtra(last)
-    //if (nochmal dran)
-    //  neuer zug round -= 1
-    //print(last)
     round += 1
-    //print(board.toString())
   }
 
   def checkExtra(last: Int): Unit ={
@@ -89,15 +89,37 @@ class Controller() extends Observable{
   }
 
   def undo: Unit = {
-    board.gameboard = board.oldgb.clone()
-    round -= 1
-    print("undo \n")
-    print(board.toString)
+    if (undone || round == 0) {
+      throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
+    } else {
+      var vboard = new Gameboard
+      vboard.gameboard = board.gameboard.clone()
+      board.gameboard = board.oldgb.clone()
+      board.oldgb = vboard.gameboard.clone()
+      round -= 1
+      undone = true
+      print("undo \n")
+    }
   }
 
-//  def reset: Unit = {
-//    board.boardInit
-//  }
+  def redo: Unit = {
+    if(!undone || round == 0) {
+      throw new IllegalArgumentException("Kein REDO möglich")
+    } else {
+      var vboard = new Gameboard
+      vboard.gameboard = board.gameboard.clone()
+      board.gameboard = board.oldgb.clone()
+      board.oldgb = vboard.gameboard.clone()
+      round += 1
+      print("redo \n")
+      undone = false
+    }
+  }
+
+  def reset: Unit = {
+    board.boardInit(amoutStones)
+    round = 0
+  }
 
   def checkWin: Unit = {
     var x: Int = 0
@@ -124,22 +146,17 @@ class Controller() extends Observable{
     board.gameboard(0) += y
 
     if (board.gameboard(7) > board.gameboard(0)) {
-      println("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0))
-      println("WIN PLAYER 1")
+      print("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0) + "\n")
+      print("WIN PLAYER 1\n")
       exit()
     } else if (board.gameboard(0) > board.gameboard(7)) {
-      println("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0))
-      println("WIN PLAYER 2")
+      print("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0) + "\n")
+      print("WIN PLAYER 2\n")
       exit()
     } else {
-      println("TIE")
+      print("TIE\n")
       exit()
     }
-  }
-
-  def setWinp1: Unit = {
-    val WinBoard: Array[Int] = Array[Int](0, 0, 0, 0, 0, 0, 0, 50, 6, 6, 6, 6, 6, 6)
-    board.gameboard = WinBoard.clone
   }
 
   def exit(): Unit = {
