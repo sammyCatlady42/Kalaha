@@ -1,3 +1,8 @@
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/sammyCatlady42/Kalaha.svg?columns=all)](https://waffle.io/sammyCatlady42/Kalaha)
+
+[![Build Status](https://travis-ci.org/sammyCatlady42/Kalaha.svg?branch=master)](https://travis-ci.org/SammyCatlady42/htwg.se.Kalaha)
+
+[![Coverage Status](https://coveralls.io/repos/github/sammyCatlady42/Kalaha.svg?branch=master)](https://coveralls.io/github/sammyCatlady42/Kalaha.svg?branch=master)
 # Kalaha
 =====================================================
 ## A game from two students for the lecture SoftwareEngineering
