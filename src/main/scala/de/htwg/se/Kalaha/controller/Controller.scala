@@ -16,11 +16,8 @@ class Controller() extends Observable{
     print("index = " + index + "\n")
     val turn = round % 2
     print("Turn = " + turn + "\n")
-    if(turn == 0){
-      print("Spieler 1")
-    }else{
-      print("Spieler 2")
-      index += 6
+    if(turn == 1){
+      index += 7
     }
     var idx = index
     var last = 0
@@ -50,19 +47,21 @@ class Controller() extends Observable{
         last = (idx + i) % 14
       }
     }
+    checkWin
     checkExtra(last)
     //if (nochmal dran)
     //  neuer zug round -= 1
-    print(last)
+    //print(last)
     round += 1
     //print(board.toString())
   }
+
   def checkExtra(last: Int): Unit ={
     //println("checkExtra!")
     if ((round % 2 == 1 && last == 0) || (round % 2 == 0 && last == 7)) {
       //print("New Turn")
       //tui.startTurn()
-      notifyObservers
+      //notifyObservers
       round -= 1
     }
     if (board.gameboard(last) == 1) {
@@ -75,11 +74,15 @@ class Controller() extends Observable{
       if (own) {
         val idx = 14 - last
         if (round % 2 == 0){
-          board.gameboard(0) += board.gameboard(idx)
+          board.gameboard(7) += board.gameboard(idx)
+          board.gameboard(7) += board.gameboard(last)
           board.gameboard(idx) = 0
+          board.gameboard(last) = 0
         } else {
           board.gameboard(0) += board.gameboard(idx)
+          board.gameboard(0) += board.gameboard(last)
           board.gameboard(idx) = 0
+          board.gameboard(last) = 0
         }
       }
     }
@@ -96,7 +99,19 @@ class Controller() extends Observable{
 //    board.boardInit
 //  }
 
-  def win: Int = {
+  def checkWin: Unit = {
+    var x: Int = 0
+    for (i <- 1 until 6 + 1) {
+      x += board.gameboard(i)
+    }
+    var y: Int = 0
+    for (i <- 1 until 6 + 1)
+      y += board.gameboard(i + 7)
+
+    if (x == 0 || y == 0) win
+  }
+
+  def win: Unit = {
     var x: Int = 0
     for (i <- 1 until 6 + 1) {
       x += board.gameboard(i)
@@ -111,19 +126,23 @@ class Controller() extends Observable{
     if (board.gameboard(7) > board.gameboard(0)) {
       println("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0))
       println("WIN PLAYER 1")
-      1
+      exit()
     } else if (board.gameboard(0) > board.gameboard(7)) {
       println("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0))
       println("WIN PLAYER 2")
-      2
+      exit()
     } else {
-      print("TIE")
-      0
+      println("TIE")
+      exit()
     }
   }
 
   def setWinp1: Unit = {
     val WinBoard: Array[Int] = Array[Int](0, 0, 0, 0, 0, 0, 0, 50, 6, 6, 6, 6, 6, 6)
     board.gameboard = WinBoard.clone
+  }
+
+  def exit(): Unit = {
+    sys.exit(0)
   }
 }

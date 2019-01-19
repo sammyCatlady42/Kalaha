@@ -5,12 +5,12 @@ import de.htwg.se.Kalaha.observer.Observable
 
 class Tui(controller: Controller) extends Observable{
 
-  controller.addObserver(this)
+  //controller.addObserver(this)
 
   def startGame(): Unit = {
     welcomeMsg()
     askForAmountStonesStart()
-    print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
+    //print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
     showGameboard()
     startTurn()
     showGameboard()
@@ -36,6 +36,12 @@ class Tui(controller: Controller) extends Observable{
   }
 
   def startTurn(): Unit = {
+    var turn = controller.round % 2
+    if (turn == 0) {
+      print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.")
+    } else {
+      print("\nSpieler " + Console.BLUE + "2 " + Console.RESET + "ist an der Reihe.")
+    }
     print("\nWähle eine Mulde : ")
     var input = 0
     try {
@@ -51,6 +57,8 @@ class Tui(controller: Controller) extends Observable{
         startTurn()
       case true => controller.move(input)
     }
+    showGameboard()
+    startTurn()
   }
 
   def readUserInput(): Int = {
@@ -65,7 +73,17 @@ class Tui(controller: Controller) extends Observable{
     * @param index userinput
     */
   def checkInputIFValid(index: Int): Any = index match {
-    case x if 1 until 6 + 1 contains x => true
+    case x if 1 until 6 + 1 contains x => {
+      var idx = index
+      if (controller.round % 2 == 1) {
+        idx += 7
+      }
+      if (controller.board.gameboard(idx) > 0) {
+        true
+      } else {
+        false
+      }
+    }
     case _ => false
   }
 
