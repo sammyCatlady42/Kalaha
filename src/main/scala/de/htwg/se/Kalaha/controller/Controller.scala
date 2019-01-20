@@ -20,6 +20,7 @@ class Controller() extends Observable {
     board.boardInit(amountStonesStart)
     notifyObservers
   }
+
   def controllerInit(): Unit = {
     amountStones = 6
     board.boardInit()
@@ -45,7 +46,7 @@ class Controller() extends Observable {
     //print("Balls = " + countStonesInMuld + "\n")
     board.gameboard(idx) = 0
     for (i <- 1 until countStonesInMuld + 1) {
-      if ((turn == 0 && (index + i) % 14 == 0) || (turn == 1 && (index + i) % 14 == 7)) {
+      if ((turn == 0 && (index + i) % 14 == 0) || (turn == 1 && (index + i) % 14 == p1)) {
         //print("turn: " + round % 2 + " i = " + (index + i) + " x = " + countStonesInMuld + " skip\n")
 
         //check if last hole > gameboard
@@ -79,7 +80,7 @@ class Controller() extends Observable {
     var own = false
     if ((1 <= last) && (last <= 6) && round % 2 == 0) own = true
     if ((8 <= last) && (last <= 13) && round % 2 == 1) own = true
-    //print("own= " + own + "\n")
+    print("\nown= " + own)
     if (own) {
       val idx = 14 - last
       if (round % 2 == 0) {
@@ -125,7 +126,7 @@ class Controller() extends Observable {
     }
     notifyObservers
   }
-  
+
   def redo(): Unit = {
     if (!undone) {
       print(undone)
@@ -159,7 +160,7 @@ class Controller() extends Observable {
       //print("i2: " + (i + 7))
       y += board.gameboard(i + 7)
     }
-    if (x == 0 || y == 0) win
+    if (x == 0 || y == 0) win()
   }
 
   def win(): Unit = {
@@ -169,25 +170,24 @@ class Controller() extends Observable {
     }
     var y: Int = 0
     for (i <- 1 until 6 + 1)
-      y += board.gameboard(i + 7)
-    //print("x: " + x + " y: " + y)
+      y += board.gameboard(i + p1)
 
     board.gameboard(p1) += x
     board.gameboard(p2) += y
 
-    if (board.gameboard(p1) > board.gameboard(p2)) {
-      //print("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0) + "\n")
-      print("WIN PLAYER 1\n")
-      p1win = true
-    } else if (board.gameboard(p2) > board.gameboard(p1)) {
-      //print("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0) + "\n")
-      print("WIN PLAYER 2\n")
+    match {
+      case a if board.gameboard(p1) > board.gameboard(p2) =>
+        //print("P1: " + board.gameboard(p1) + " P2: " + board.gameboard(2) + "\n")
+        print("WIN PLAYER 1\n")
+        p1win = true
+      case a if board.gameboard(p2) > board.gameboard(p1) =>
+        //print("P1: " + board.gameboard(p1) + " P2: " + board.gameboard(p2) + "\n")
+        print("WIN PLAYER 2\n")
         p2win = true
-    } else {
-      //print("P1: " + board.gameboard(7) + " P2: " + board.gameboard(0) + "\n")
-      print("TIE\n")
-      p2win = true
-      p1win = true
+      case _ =>
+        print("TIE\n")
+        p2win = true
+        p1win = true
     }
   }
 
