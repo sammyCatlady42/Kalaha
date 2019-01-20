@@ -23,3 +23,6 @@ libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
 
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.6"
 libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
+
+//libraryDependencies += "org.scala-lang.modules" % "scala-swing_2.12" % "2.0.3"
+libraryDependencies += "org.scala-lang.modules" %% "scala-swing" % "2.0.0-M2"

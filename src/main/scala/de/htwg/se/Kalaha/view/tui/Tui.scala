@@ -5,8 +5,6 @@ import de.htwg.se.Kalaha.observer.Observable
 
 class Tui(controller: Controller) extends Observable{
 
-  //controller.addObserver(this)
-
   def startGame(): Unit = {
     welcomeMsg()
     askForAmountStonesStart()
@@ -53,7 +51,7 @@ class Tui(controller: Controller) extends Observable{
     try {
       input = scala.io.StdIn.readLine()
     } catch {
-      case _ => print("Felher beim lesen")
+      case _: Throwable => print("Felher beim lesen")
     }
     input match {
       case "p" => startTurn()
@@ -61,14 +59,14 @@ class Tui(controller: Controller) extends Observable{
         try {
           controller.undo
         } catch {
-          case e => print(e)
+          case e: Throwable => print(e)
         }
       }
       case "redo" => {
         try {
           controller.redo
         } catch {
-          case e => print(e)
+          case e: Throwable => print(e)
         }
       }
       case "reset" => controller.reset
@@ -89,6 +87,7 @@ class Tui(controller: Controller) extends Observable{
       print("\nSpieler " + Console.BLUE + "2 " + Console.RESET + "ist an der Reihe.")
     }
     print("\nWähle eine Mulde : ")
+
     var input = 0
     try {
       input = readUserInput()
@@ -97,11 +96,17 @@ class Tui(controller: Controller) extends Observable{
         print("\nBitte Zahlenwerte angeben.")
         startTurn()
     }
+
     checkInputIFValid(input) match {
       case false =>
         print("\nBitte richtige Werte angeben.")
         startTurn()
-      case true => controller.move(input)
+      case true => {
+        if (turn == 1) {
+          input += 7
+        }
+        controller.move(input)
+      }
     }
     showGameboard()
     navigate()

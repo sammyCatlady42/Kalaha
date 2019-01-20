@@ -14,14 +14,16 @@ class Controller() extends Observable{
     board.boardInit(amountStonesStart)
   }
 
+  def updateStones(x: Int): Unit = {
+    amoutStones = x
+  }
+
   def move(inputIndex: Int): Unit = {
     var index = inputIndex
     print("index = " + index + "\n")
     val turn = round % 2
     print("Turn = " + turn + "\n")
-    if(turn == 1){
-      index += 7
-    }
+
     var idx = index
     var last = 0
     board.oldgb = board.gameboard.clone()
@@ -31,6 +33,8 @@ class Controller() extends Observable{
     for (i <- 1 until countStonesInMuld + 1) {
       if ((turn == 0 && (index + i) % 14 == 0) || (turn == 1 && (index + i) % 14 == 7)) {
         //print("turn: " + round % 2 + " i = " + (index + i) + " x = " + countStonesInMuld + " skip\n")
+
+        //check if last hole > gameboard
         if (idx + i >= board.gameboard.length) {
           val y: Int = (idx + i - board.gameboard.length) % 14
           board.gameboard(y + 1) += 1
@@ -54,8 +58,14 @@ class Controller() extends Observable{
     undone = false
     checkExtra(last)
     round += 1
+    /*var s: String = ""
+    for (i <- 0 until board.gameboard.length-1)
+      s += board.gameboard(i)
+    s += "\n"
+    print(s)*/
   }
 
+  //noinspection ScalaStyle
   def checkExtra(last: Int): Unit ={
     //println("checkExtra!")
     if ((round % 2 == 1 && last == 0) || (round % 2 == 0 && last == 7)) {
@@ -89,7 +99,7 @@ class Controller() extends Observable{
   }
 
   def undo: Unit = {
-    if (undone || round == 0) {
+    if (undone) {
       throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
     } else {
       var vboard = new Gameboard
@@ -103,7 +113,8 @@ class Controller() extends Observable{
   }
 
   def redo: Unit = {
-    if(!undone || round == 0) {
+    if(!undone) {
+      print(undone)
       throw new IllegalArgumentException("Kein REDO möglich")
     } else {
       var vboard = new Gameboard
