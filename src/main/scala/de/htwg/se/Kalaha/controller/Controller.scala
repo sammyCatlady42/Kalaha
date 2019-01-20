@@ -3,15 +3,18 @@ package de.htwg.se.Kalaha.controller
 import de.htwg.se.Kalaha.model.Gameboard
 import de.htwg.se.Kalaha.observer.Observable
 
-class Controller() extends Observable{
+class Controller() extends Observable {
   var round = 0
   var board = new Gameboard
   var amoutStones = 0
   var undone = true
 
-  def controllerInit(amountStonesStart : Int): Unit = {
+  def controllerInit(amountStonesStart: Int): Unit = {
     amoutStones = amountStonesStart
     board.boardInit(amountStonesStart)
+  }
+  def controllerInit(): Unit = {
+    board.boardInit()
   }
 
   def updateStones(x: Int): Unit = {
@@ -23,7 +26,6 @@ class Controller() extends Observable{
     print("index = " + index + "\n")
     val turn = round % 2
     print("Turn = " + turn + "\n")
-
     var idx = index
     var last = 0
     board.oldgb = board.gameboard.clone()
@@ -54,7 +56,7 @@ class Controller() extends Observable{
         last = (idx + i) % 14
       }
     }
-    checkWin
+    checkWin()
     undone = false
     checkExtra(last)
     round += 1
@@ -65,8 +67,28 @@ class Controller() extends Observable{
     print(s)*/
   }
 
-  //noinspection ScalaStyle
-  def checkExtra(last: Int): Unit ={
+  def collectEnemyStones(last: Int): Unit = {
+    var own = false
+    if ((1 <= last) && (last <= 6) && round % 2 == 0) own = true
+    if ((8 <= last) && (last <= 13) && round % 2 == 1) own = true
+    //println("own= " + own)
+    if (own) {
+      val idx = 14 - last
+      if (round % 2 == 0) {
+        board.gameboard(7) += board.gameboard(idx)
+        board.gameboard(7) += board.gameboard(last)
+        board.gameboard(idx) = 0
+        board.gameboard(last) = 0
+      } else {
+        board.gameboard(0) += board.gameboard(idx)
+        board.gameboard(0) += board.gameboard(last)
+        board.gameboard(idx) = 0
+        board.gameboard(last) = 0
+      }
+    }
+  }
+
+  def checkExtra(last: Int): Unit = {
     //println("checkExtra!")
     if ((round % 2 == 1 && last == 0) || (round % 2 == 0 && last == 7)) {
       //print("New Turn")
@@ -75,30 +97,11 @@ class Controller() extends Observable{
       round -= 1
     }
     if (board.gameboard(last) == 1) {
-      var own = false
-      if ((1 <= last) && (last <= 6) && round % 2 == 0)
-        own = true
-      if ((8 <= last) && (last <= 13) && round % 2 == 1)
-        own = true
-      //println("own= " + own)
-      if (own) {
-        val idx = 14 - last
-        if (round % 2 == 0){
-          board.gameboard(7) += board.gameboard(idx)
-          board.gameboard(7) += board.gameboard(last)
-          board.gameboard(idx) = 0
-          board.gameboard(last) = 0
-        } else {
-          board.gameboard(0) += board.gameboard(idx)
-          board.gameboard(0) += board.gameboard(last)
-          board.gameboard(idx) = 0
-          board.gameboard(last) = 0
-        }
-      }
+      collectEnemyStones(last)
     }
   }
 
-  def undo: Unit = {
+  def undo(): Unit = {
     if (undone) {
       throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
     } else {
@@ -111,9 +114,9 @@ class Controller() extends Observable{
       print("undo \n")
     }
   }
-
-  def redo: Unit = {
-    if(!undone) {
+  
+  def redo(): Unit = {
+    if (!undone) {
       print(undone)
       throw new IllegalArgumentException("Kein REDO möglich")
     } else {
@@ -127,12 +130,12 @@ class Controller() extends Observable{
     }
   }
 
-  def reset: Unit = {
+  def reset(): Unit = {
     board.boardInit(amoutStones)
     round = 0
   }
 
-  def checkWin: Unit = {
+  def checkWin(): Unit = {
     var x: Int = 0
     for (i <- 1 until 6 + 1) {
       x += board.gameboard(i)
@@ -144,7 +147,7 @@ class Controller() extends Observable{
     if (x == 0 || y == 0) win
   }
 
-  def win: Unit = {
+  def win(): Unit = {
     var x: Int = 0
     for (i <- 1 until 6 + 1) {
       x += board.gameboard(i)
@@ -152,7 +155,7 @@ class Controller() extends Observable{
     var y: Int = 0
     for (i <- 1 until 6 + 1)
       y += board.gameboard(i + 7)
-    
+
     board.gameboard(7) += x
     board.gameboard(0) += y
 
