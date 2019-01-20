@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/sammyCatlady42/Kalaha.svg?branch=master)](https://travis-ci.org/SammyCatlady42/htwg.se.Kalaha)
 
-[![Coverage Status](https://coveralls.io/repos/github/sammyCatlady42/Kalaha.svg?branch=master)](https://coveralls.io/github/sammyCatlady42/Kalaha.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/sammyCatlady42/Kalaha/badge.svg?branch=master)](https://coveralls.io/github/sammyCatlady42/Kalaha?branch=master)
 # Kalaha
 =====================================================
 ## A game from two students for the lecture SoftwareEngineering
