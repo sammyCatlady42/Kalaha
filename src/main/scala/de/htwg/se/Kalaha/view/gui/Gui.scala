@@ -69,6 +69,9 @@ class Gui(controller: Controller) extends Frame with Observer {
       contents += new MenuItem(Action("Mit JSON speichern") {
         controller.save
       })
+      contents += new MenuItem(Action("Spiel laden") {
+        controller.load
+      })
       contents += new MenuItem(Action("Spielregeln") {
         help()
       })

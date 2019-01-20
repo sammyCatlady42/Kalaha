@@ -2,12 +2,14 @@ package de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl
 
 import de.htwg.se.Kalaha.controller.controllerComponent.ControllerInterface
 import de.htwg.se.Kalaha.model.gameboardController.GameboardImpl.Gameboard
+import de.htwg.se.Kalaha.model.fileIoComponent.fileIoJsonImpl.FileIO
 import de.htwg.se.Kalaha.util.{Observable, UndoManager}
 import de.htwg.se.Kalaha.view.gui.Gui
 import de.htwg.se.Kalaha.view.tui.Tui
 
-class Controller() extends Observable with ControllerInterface{
+class Controller() extends Observable with ControllerInterface {
   var board = new Gameboard
+  //var vboard = new
   var amountStones = 0
   var undone = false
   var p1win = false
@@ -15,6 +17,7 @@ class Controller() extends Observable with ControllerInterface{
   val p1 = 7
   val p2 = 0
   private val undoManager = new UndoManager
+  var fileIO = new FileIO
 
   //val injector = Guice.createInjector(new GameboardModule)
   //val fileIo = injector.instance[FileIOInterface]
@@ -121,7 +124,7 @@ class Controller() extends Observable with ControllerInterface{
     if (undone) {
          throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
        } else {
-          val vBoard = new Gameboard
+          var vBoard = new Gameboard
           vBoard.gameboard = board.gameboard.clone()
           board.gameboard = board.oldgb.clone()
           board.oldgb = vBoard.gameboard.clone()
@@ -135,7 +138,7 @@ class Controller() extends Observable with ControllerInterface{
 
   def redo(): Unit = {
     if(undone) {
-    val vBoard = new Gameboard
+    var vBoard = new Gameboard
     vBoard.gameboard = board.gameboard.clone()
     board.gameboard = board.oldgb.clone()
     board.oldgb = vBoard.gameboard.clone()
@@ -200,7 +203,11 @@ class Controller() extends Observable with ControllerInterface{
   }
 
   def save: Unit = {
-   // FileIO.save(Gameboard)
-
+    fileIO.save(board)
   }
+
+  def load: Unit = {
+    fileIO.load(this)
+  }
+
 }
