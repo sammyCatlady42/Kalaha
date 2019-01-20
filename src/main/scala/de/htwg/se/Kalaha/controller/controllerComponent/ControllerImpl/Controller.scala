@@ -137,8 +137,10 @@ class Controller() extends Observable with ControllerInterface {
   }
 
   def redo(): Unit = {
-    if(undone) {
-    var vBoard = new Gameboard
+    if(!undone) {
+      throw new IllegalArgumentException("Es ist nur möglich einen Zug vorwärts zu machen")
+    } else {
+    val vBoard = new Gameboard
     vBoard.gameboard = board.gameboard.clone()
     board.gameboard = board.oldgb.clone()
     board.oldgb = vBoard.gameboard.clone()

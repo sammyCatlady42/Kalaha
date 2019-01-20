@@ -124,7 +124,7 @@ class Tui(controller: Controller) extends Observer {
     *
     * @param index userinput
     */
-  def checkInputIFValid(index: Int): Any = index match {
+  def checkInputIFValid(index: Int): Boolean = index match {
     case x if 1 until 6 + 1 contains x =>
       var idx = index
       if (controller.board.round % 2 == 1) {
