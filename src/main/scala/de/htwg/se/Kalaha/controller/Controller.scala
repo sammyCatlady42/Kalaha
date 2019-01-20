@@ -18,7 +18,7 @@ class Controller() extends Observable {
   def controllerInit(amountStonesStart: Int): Unit = {
     amountStones = amountStonesStart
     board.boardInit(amountStonesStart)
-    notifyObservers
+   // notifyObservers
   }
 
   def controllerInit(): Unit = {
@@ -71,9 +71,10 @@ class Controller() extends Observable {
     }
 
     undone = false
-    checkExtra(last)
-    round += 1
     notifyObservers
+    checkExtra(last)
+
+    round += 1
   }
 
   def collectEnemyStones(last: Int): Unit = {
@@ -106,10 +107,13 @@ class Controller() extends Observable {
       //notifyObservers
 
       round -= 1
+      notifyObservers
     }
     if (board.gameboard(last) == 1) {
       collectEnemyStones(last)
+      notifyObservers
     }
+
   }
 
   def undo(): Unit = {

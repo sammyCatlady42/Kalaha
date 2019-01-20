@@ -14,21 +14,46 @@ class Gui(controller: Controller) extends Frame with Observer {
 
   controller.addObserver(this)
 
-  val height = 600
-  val width = 900
+  val height = 400
+  val width = 1000
   val row = 2
   val col = 6
   var str = "Spieler 1 ist am Zug"
 
   var fieldButtons = Array.ofDim[FieldButton](row, col)
 
+  var p = new Publisher {}
+
   title = "Kalaha"
   preferredSize = new Dimension(width, height)
 
   setButtons()
 
+  val textPanel: TextField = new TextField() {
+    editable = false
+    background = Color.decode("#cc2023")
+    text = str
+  }
+
+  val kalaha1: TextField = new TextField() {
+    font = new Font("Arial", 0, 150)
+    //editable = false
+    background = Color.decode("#cc2023")
+    text = controller.board.gameboard(controller.p1).toString
+    preferredSize = new Dimension(200, 600)
+  }
+
+  val kalaha2: TextField = new TextField() {
+    font = new Font("Arial", 0, 150)
+    background = Color.decode("#6365ff")
+    //print("p2: " + controller.board.gameboard(0).toString)
+    text = controller.board.gameboard(0).toString
+    preferredSize = new Dimension(200, 600)
+    //editable = false
+  }
+
   contents = new BorderPanel {
-    add(label1, BorderPanel.Position.North)
+    add(textPanel, BorderPanel.Position.North)
     add(kalaha1, BorderPanel.Position.East)
     add(kalaha2, BorderPanel.Position.West)
     add(gridPanel, BorderPanel.Position.Center)
@@ -73,9 +98,10 @@ class Gui(controller: Controller) extends Frame with Observer {
   }
 
   visible = true
-  redraw()
+  //redraw()
 
   def label1: Label = new Label() {
+    //contents = text
     if (controller.round % 2 == 0) {
       //println("textfeld player 1")
       background = Color.decode("#cc2023")
@@ -87,41 +113,6 @@ class Gui(controller: Controller) extends Frame with Observer {
     }
   }
 
-  def textPanel: TextField = new TextField() {
-    //ignoreRepaint = false
-    //editable = true
-
-    var tester = controller.round % 2 == 0
-    //print("rounnnnnnd                 - " + tester)
-    if (tester) {
-      //println("textfeld")
-      background = Color.decode("#cc2023")
-      text = "Spieler 1 ist am Zug"
-    } else {
-      background = Color.decode("#6365ff")
-      text = "Spieler 2 ist am Zug"
-
-    }
-    //    print("set text to  -------------------------" + textPanel.text)
-    //editable = false
-  }
-
-  def kalaha1: TextField = new TextField() {
-    font = new Font("Arial", 0, 150)
-    //editable = false
-    background = Color.decode("#cc2023")
-    text = controller.board.gameboard(7).toString
-    preferredSize = new Dimension(100, 600)
-  }
-
-  def kalaha2: TextField = new TextField() {
-    font = new Font("Arial", 0, 150)
-    background = Color.decode("#6365ff")
-    //print("p2: " + controller.board.gameboard(0).toString)
-    text = controller.board.gameboard(0).toString
-    preferredSize = new Dimension(100, 600)
-    //editable = false
-  }
 
   def gridPanel: GridPanel = new GridPanel(row, col) {
     preferredSize = new Dimension(600, 600)
@@ -152,12 +143,14 @@ class Gui(controller: Controller) extends Frame with Observer {
       x <- 0 until row
       y <- 0 until col
     } fieldButtons(x)(y).reactions += {
-      case _: ButtonClicked =>
+      case b: ButtonClicked =>
         if (controller.round % 2 == 0) {
           if (x == 0) {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(y + 1)
+            //publish(b)
+
             redraw()
           }
 
@@ -166,6 +159,8 @@ class Gui(controller: Controller) extends Frame with Observer {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(13 - y)
+            //redraw()
+            //publish(b)
             redraw()
           }
         }
@@ -173,19 +168,14 @@ class Gui(controller: Controller) extends Frame with Observer {
   }
 
   def redraw(): Unit = {
-    if (controller.round % 2 == 1) {
-      label1.background = Color.decode("#cc2023")
+    if (controller.round % 2 == 0) {
+      textPanel.background = Color.decode("#cc2023")
       str = "Spieler 1 ist am Zug"
-
-      label1.text_=(str)
-      label1.revalidate()
-      label1.repaint()
+      textPanel.text_=(str)
     } else {
-      label1.background = Color.decode("#6365ff")
+      textPanel.background = Color.decode("#6365ff")
       str = "Spieler 2 ist am Zug"
-      label1.text_=(str)
-      label1.revalidate()
-      label1.repaint()
+      textPanel.text_=(str)
     }
     for (x <- 0 until col) {
       fieldButtons(0)(x).text = "" + controller.board.gameboard(13 - x)
@@ -197,10 +187,10 @@ class Gui(controller: Controller) extends Frame with Observer {
     //kalaha2.repaint()
 
 
-    textPanel.text = "test"
+    //textPanel.text = "test"
 
     //println("repaint")
-    repaint()
+    repaint
   }
 
   def exit(): Unit = {
