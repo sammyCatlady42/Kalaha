@@ -3,16 +3,16 @@ package de.htwg.se.Kalaha.view.gui
 import java.awt.{Color, Font}
 
 import de.htwg.se.Kalaha.controller.Controller
+import de.htwg.se.Kalaha.observer.Observer
 import de.htwg.se.Kalaha.util.Point
 
 import scala.language.postfixOps
 import scala.swing._
 import scala.swing.event._
 
-class Gui(controller: Controller) extends Frame {
+class Gui(controller: Controller) extends Frame with Observer {
 
-  //val observable = new Observable
-  //addObserver(observable)
+  controller.addObserver(this)
 
   val height = 600
   val width = 900
@@ -28,7 +28,7 @@ class Gui(controller: Controller) extends Frame {
   setButtons()
 
   contents = new BorderPanel {
-    add(textPanel, BorderPanel.Position.North)
+    add(label1, BorderPanel.Position.North)
     add(kalaha1, BorderPanel.Position.East)
     add(kalaha2, BorderPanel.Position.West)
     add(gridPanel, BorderPanel.Position.Center)
@@ -39,22 +39,22 @@ class Gui(controller: Controller) extends Frame {
     contents += new Menu("File") {
       mnemonic = Key.F
       contents += new MenuItem(Action("Neues Spiel") {
-        controller.reset
-        update()
+        reset
+        redraw()
       })
       contents += new MenuItem(Action("Beenden") {
-        controller.exit()
+        exit()
       })
     }
     contents += new Menu("Edit") {
       mnemonic = Key.E
       contents += new MenuItem(Action("Undo") {
         controller.undo
-        update()
+        redraw()
       })
       contents += new MenuItem(Action("Redo") {
         controller.redo
-        update()
+        redraw()
       })
     }
     contents += new Menu("Options") {
@@ -62,26 +62,26 @@ class Gui(controller: Controller) extends Frame {
       contents += new MenuItem(Action("Mit 4 Kugeln starten") {
         controller.updateStones(4)
         controller.reset
-        update()
+        redraw()
       })
       contents += new MenuItem(Action("Mit 6 Kugeln starten") {
         controller.updateStones(6)
         controller.reset
-        update()
+        redraw()
       })
     }
   }
 
   visible = true
-  update()
+  redraw()
 
   def label1: Label = new Label() {
     if (controller.round % 2 == 0) {
-      println("textfeld player 1")
+      //println("textfeld player 1")
       background = Color.decode("#cc2023")
       text = str
     } else {
-      println("textfeld player 2")
+      //println("textfeld player 2")
       background = Color.decode("#6365ff")
       text = "Spieler 2 ist am Zug"
     }
@@ -91,8 +91,8 @@ class Gui(controller: Controller) extends Frame {
     //ignoreRepaint = false
     //editable = true
 
-var tester  = controller.round % 2 == 0
-    print("rounnnnnnd                 - " + tester)
+    var tester = controller.round % 2 == 0
+    //print("rounnnnnnd                 - " + tester)
     if (tester) {
       //println("textfeld")
       background = Color.decode("#cc2023")
@@ -102,7 +102,7 @@ var tester  = controller.round % 2 == 0
       text = "Spieler 2 ist am Zug"
 
     }
-//    print("set text to  -------------------------" + textPanel.text)
+    //    print("set text to  -------------------------" + textPanel.text)
     //editable = false
   }
 
@@ -117,7 +117,7 @@ var tester  = controller.round % 2 == 0
   def kalaha2: TextField = new TextField() {
     font = new Font("Arial", 0, 150)
     background = Color.decode("#6365ff")
-    print("p2: " + controller.board.gameboard(0).toString)
+    //print("p2: " + controller.board.gameboard(0).toString)
     text = controller.board.gameboard(0).toString
     preferredSize = new Dimension(100, 600)
     //editable = false
@@ -154,40 +154,38 @@ var tester  = controller.round % 2 == 0
     } fieldButtons(x)(y).reactions += {
       case _: ButtonClicked =>
         if (controller.round % 2 == 0) {
-          println("Hallo")
           if (x == 0) {
-            println("Falsch")
-            // TODO: Popup: Falsch
+            val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(y + 1)
-            update()
+            redraw()
           }
 
         } else if (controller.round % 2 == 1) {
           if (x == 1) {
-            // TODO: Popup: Falsch
+            val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(13 - y)
-            update()
+            redraw()
           }
         }
-
     }
   }
 
-  def update(): Unit = {
+  def redraw(): Unit = {
     if (controller.round % 2 == 1) {
       label1.background = Color.decode("#cc2023")
-      //str = "Spieler 1 ist am Zug"
+      str = "Spieler 1 ist am Zug"
 
-      //label1.text_=(str)
-      //label1.revalidate()
-      //label1.repaint()
+      label1.text_=(str)
+      label1.revalidate()
+      label1.repaint()
     } else {
       label1.background = Color.decode("#6365ff")
-      //str = "Spieler 2 ist am Zug"
-      //label1.revalidate()
-      //label1.repaint()
+      str = "Spieler 2 ist am Zug"
+      label1.text_=(str)
+      label1.revalidate()
+      label1.repaint()
     }
     for (x <- 0 until col) {
       fieldButtons(0)(x).text = "" + controller.board.gameboard(13 - x)
@@ -199,9 +197,45 @@ var tester  = controller.round % 2 == 0
     //kalaha2.repaint()
 
 
-textPanel.text = "test"
+    textPanel.text = "test"
 
-    println("repaint")
+    //println("repaint")
     repaint()
+  }
+
+  def exit(): Unit = {
+    val dia = Dialog.showConfirmation(contents.head, "Sind sie sicher das sie beenden wollen?", "Beenden", optionType = Dialog.Options.YesNo)
+    if (dia == Dialog.Result.Yes) {
+      controller.exit()
+    }
+  }
+
+  def reset(): Unit = {
+    val dia = Dialog.showConfirmation(contents.head, "Sind sie sicher das sie neu starten wollen?", "Neues Spiel", optionType = Dialog.Options.YesNo)
+    if (dia == Dialog.Result.Yes) {
+      controller.reset()
+    }
+  }
+
+  def checkWin(): Unit = {
+    controller.checkWin()
+    if (controller.p2win && controller.p1win) {
+      val dia = Dialog.showConfirmation(contents.head, "Unentschieden!", "Spielende", optionType = Dialog.Options.Default)
+      controller.exit()
+    }
+    if(controller.p1win) {
+      val str = "Spieler 1 gewinnt mit " + controller.board.gameboard(controller.p1) + " Punkten! Spieler 2 hat " + controller.board.gameboard(0) + " Punkte."
+        val dia = Dialog.showConfirmation(contents.head, str, "Spielende", optionType = Dialog.Options.Default)
+        controller.exit()
+    } else if (controller.p2win) {
+      val str = "Spieler 2 gewinnt mit " + controller.board.gameboard(0) + " Punkten! Spieler 2 hat " + controller.board.gameboard(controller.p1) + " Punkte."
+      val dia = Dialog.showConfirmation(contents.head, str, "Spielende", optionType = Dialog.Options.Default)
+      controller.exit()
+    }
+  }
+
+  override def update(): Unit = {
+    checkWin()
+    redraw()
   }
 }

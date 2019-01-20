@@ -1,13 +1,15 @@
 package de.htwg.se.Kalaha.view.tui
 
 import de.htwg.se.Kalaha.controller.Controller
-import de.htwg.se.Kalaha.observer.Observable
+import de.htwg.se.Kalaha.observer.Observer
 
-class Tui(controller: Controller) extends Observable{
+class Tui(controller: Controller) extends Observer {
+
+  controller.addObserver(this)
 
   def startGame(): Unit = {
     welcomeMsg()
-    askForAmountStonesStart()
+    //askForAmountStonesStart()
     //print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
     showGameboard()
     navigate()
@@ -40,13 +42,7 @@ class Tui(controller: Controller) extends Observable{
     } else {
       print("\nSpieler " + Console.BLUE + "2 " + Console.RESET + "ist an der Reihe.")
     }
-    print("\nMögliche Eingaben:\n")
-    print("     p => Zug des aktuellen Spielers starten\n")
-    print("     show => Anzeigen des Spielfelds\n")
-    print("     undo => Letzten Zug rückgängig machen\n")
-    print("     redo => Letzten Undo rückgängig machen\n")
-    print("     reset => Spielfeld auf Anfang zurücksetzten\n")
-    print("     exit => Beenden\n")
+    printHelp()
     var input = ""
     try {
       input = scala.io.StdIn.readLine()
@@ -54,6 +50,7 @@ class Tui(controller: Controller) extends Observable{
       case _: Throwable => print("Felher beim lesen")
     }
     input match {
+      case "option" => askForAmountStonesStart()
       case "p" => startTurn()
       case "undo" => {
         try {
@@ -168,6 +165,37 @@ class Tui(controller: Controller) extends Observable{
         Console.BLUE + "|    | " + Console.RESET + gameboardString(1) + " | " + gameboardString(2) + " | " + gameboardString(3) + " | " + gameboardString(4) + " | " + gameboardString(5) + " | " + gameboardString(6) + Console.RED + " |    |\n" + Console.RESET +
         Console.RED + "--------1----2----3----4----5----6-------\n" + Console.RESET
     print(s)
+  }
+  def checkWin(): Unit = {
+    controller.checkWin()
+    if (controller.p2win && controller.p1win) {
+      print("Unentschieden!\n")
+      //controller.exit()
+    }
+    if(controller.p1win) {
+      print("Spieler 1 gewinnt mit " + controller.board.gameboard(7) + "Punkten!\n")
+      //controller.exit()
+    } else if (controller.p2win) {
+      print("Spieler 2 gewinnt mit " + controller.board.gameboard(0) + "Punkten!\n")
+      //controller.exit()
+    }
+  }
+
+  def printHelp() : Unit = {
+    print("\nMögliche Eingaben:\n")
+    print("     p => Zug des aktuellen Spielers starten\n")
+    print("     option => Feld mit 4 oder 6 Kugeln\n")
+    print("     show => Anzeigen des Spielfelds\n")
+    print("     undo => Letzten Zug rückgängig machen\n")
+    print("     redo => Letzten Undo rückgängig machen\n")
+    print("     reset => Spielfeld auf Anfang zurücksetzten\n")
+    print("     exit => Beenden\n")
+  }
+
+  override def update(): Unit = {
+    showGameboard()
+    printHelp()
+    //checkWin()
   }
 
   //ruft theoretisch nur funktionen auf

@@ -24,16 +24,6 @@ case class Gameboard() {
     gameboard = newBoard.clone()
   }
 
-//  def setBoardwithString(newBoard: String): Unit = {
-//    var game = new Array[Int](SIZE)
-//    for (i <- gameboard.indices) {
-//      print("\n hier ich " + i + "----" + newBoard.charAt(i).toInt)
-//      game(i) = newBoard.charAt(i).toInt
-//    }
-//    gameboard = game.clone()
-//  }
-
-
   override def toString: String = {
     var s: String = ""
     for (i <- gameboard.indices)
