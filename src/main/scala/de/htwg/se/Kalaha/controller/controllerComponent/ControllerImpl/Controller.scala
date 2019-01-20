@@ -137,7 +137,16 @@ class Controller() extends Observable with ControllerInterface{
   }
 
   def redo(): Unit = {
-    undoManager.redoStep
+    if(undone) {
+    val vBoard = new Gameboard
+    vBoard.gameboard = board.gameboard.clone()
+    board.gameboard = board.oldgb.clone()
+    board.oldgb = vBoard.gameboard.clone()
+    board.round += 1
+    print("redo \n")
+    undone = false
+    }
+    //undoManager.redoStep
     notifyObservers
   }
 
