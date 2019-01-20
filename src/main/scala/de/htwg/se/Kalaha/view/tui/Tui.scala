@@ -4,12 +4,11 @@ import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controlle
 import de.htwg.se.Kalaha.util.Observer
 
 class Tui(controller: Controller) extends Observer {
-
+  val four = 4
   controller.addObserver(this)
 
   def startGame(): Unit = {
     welcomeMsg()
-    //askForAmountStonesStart()
     //print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.") // player
     showGameboard()
     navigate()
@@ -17,7 +16,7 @@ class Tui(controller: Controller) extends Observer {
   }
 
   def askForAmountStonesStart(): Unit = {
-    print("\n4 oder 6 Steine? : ")
+    print("\nfour oder 6 Steine? : ")
     var input = 0
     try {
       input = readUserInput()
@@ -27,7 +26,7 @@ class Tui(controller: Controller) extends Observer {
         askForAmountStonesStart()
     }
     input match {
-      case 4 => controller.controllerInit(4)
+      case 4 => controller.controllerInit(four)
       case 6 => controller.controllerInit(6)
       case _ =>
         print("\nBitte richtige Werte angeben.")
@@ -35,13 +34,18 @@ class Tui(controller: Controller) extends Observer {
     }
   }
 
-  def navigate(): Unit = {
+
+  def checkPlayer(): Unit = {
     val turn = controller.board.round % 2
     if (turn == 0) {
       print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.")
     } else {
       print("\nSpieler " + Console.BLUE + "2 " + Console.RESET + "ist an der Reihe.")
     }
+  }
+
+  def navigate(): Unit = {
+    checkPlayer()
     printHelp()
     var input = ""
     try {
@@ -69,7 +73,7 @@ class Tui(controller: Controller) extends Observer {
       case "reset" => controller.reset
       case "exit" => controller.exit
       case "show" => showGameboard()
-      case _  => {
+      case _ => {
         print("Falsche Eingabe\n")
       }
     }
@@ -98,12 +102,11 @@ class Tui(controller: Controller) extends Observer {
       case false =>
         print("\nBitte richtige Werte angeben.")
         startTurn()
-      case true => {
+      case true =>
         if (turn == 1) {
           input += 7
         }
         controller.move(input)
-      }
     }
     showGameboard()
     navigate()
@@ -121,7 +124,7 @@ class Tui(controller: Controller) extends Observer {
     * @param index userinput
     */
   def checkInputIFValid(index: Int): Any = index match {
-    case x if 1 until 6 + 1 contains x => {
+    case x if 1 until 6 + 1 contains x =>
       var idx = index
       if (controller.board.round % 2 == 1) {
         idx += 7
@@ -131,7 +134,6 @@ class Tui(controller: Controller) extends Observer {
       } else {
         false
       }
-    }
     case _ => false
   }
 
@@ -148,7 +150,7 @@ class Tui(controller: Controller) extends Observer {
     var board = controller.board
 
     val gameboardString = new Array[String](14)
-    for (i <- 0 until gameboardString.length) {
+    for (i <- gameboardString.indices) {
       if (board.gameboard(i) < 10) {
         gameboardString(i) = " " + board.gameboard(i)
       }
@@ -162,17 +164,18 @@ class Tui(controller: Controller) extends Observer {
       Console.BLUE + "--------6----5----4----3----2----1-------\n" + Console.RESET +
         Console.BLUE + "|    | " + Console.RESET + gameboardString(13) + " | " + gameboardString(12) + " | " + gameboardString(11) + " | " + gameboardString(10) + " | " + gameboardString(9) + " | " + gameboardString(8) + Console.RED + " |    |\n" + Console.RESET +
         Console.BLUE + "| " + gameboardString(0) + " |" + Console.RESET + "-----------------------------" + Console.RED + "| " + gameboardString(7) + " |\n" + Console.RESET +
-        Console.BLUE + "|    | " + Console.RESET + gameboardString(1) + " | " + gameboardString(2) + " | " + gameboardString(3) + " | " + gameboardString(4) + " | " + gameboardString(5) + " | " + gameboardString(6) + Console.RED + " |    |\n" + Console.RESET +
+        Console.BLUE + "|    | " + Console.RESET + gameboardString(1) + " | " + gameboardString(2) + " | " + gameboardString(3) + " | " + gameboardString(four) + " | " + gameboardString(5) + " | " + gameboardString(6) + Console.RED + " |    |\n" + Console.RESET +
         Console.RED + "--------1----2----3----4----5----6-------\n" + Console.RESET
     print(s)
   }
+
   def checkWin(): Unit = {
     controller.checkWin()
     if (controller.p2win && controller.p1win) {
       print("Unentschieden!\n")
       //controller.exit()
     }
-    if(controller.p1win) {
+    if (controller.p1win) {
       print("Spieler 1 gewinnt mit " + controller.board.gameboard(7) + "Punkten!\n")
       //controller.exit()
     } else if (controller.p2win) {
@@ -181,10 +184,10 @@ class Tui(controller: Controller) extends Observer {
     }
   }
 
-  def printHelp() : Unit = {
+  def printHelp(): Unit = {
     print("\nMögliche Eingaben:\n")
     print("     p => Zug des aktuellen Spielers starten\n")
-    print("     option => Feld mit 4 oder 6 Kugeln\n")
+    print("     option => Feld mit four oder 6 Kugeln\n")
     print("     show => Anzeigen des Spielfelds\n")
     print("     undo => Letzten Zug rückgängig machen\n")
     print("     redo => Letzten Undo rückgängig machen\n")

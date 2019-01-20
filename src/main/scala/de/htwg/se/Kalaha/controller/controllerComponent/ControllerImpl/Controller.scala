@@ -22,16 +22,15 @@ class Controller() extends Observable with ControllerInterface{
   def controllerInit(amountStonesStart: Int): Unit = {
     amountStones = amountStonesStart
     board.boardInit(amountStonesStart)
-   // notifyObservers
+    // notifyObservers
   }
 
   def controllerInit(): Unit = {
-    amountStones = 6
+    updateStones(6)
     board.boardInit()
     val tui = new Tui(this)
     val gui = new Gui(this)
     tui.startGame()
-
   }
 
   def updateStones(x: Int): Unit = {
@@ -39,38 +38,36 @@ class Controller() extends Observable with ControllerInterface{
   }
 
   def move(inputIndex: Int): Unit = {
-    val index = inputIndex
+    var index = inputIndex
+    var last = 0
     //print("index = " + index + "\n")
     val turn = board.round % 2
     //print("Turn = " + turn + "\n")
-    var idx = index
-    var last = 0
     board.oldgb = board.gameboard.clone()
-    val countStonesInMuld: Int = board.gameboard(idx)
+    val countStonesInMuld: Int = board.gameboard(index)
     //print("Balls = " + countStonesInMuld + "\n")
-    board.gameboard(idx) = 0
+    board.gameboard(index) = 0
     for (i <- 1 until countStonesInMuld + 1) {
       if ((turn == 0 && (index + i) % 14 == 0) || (turn == 1 && (index + i) % 14 == p1)) {
         //print("turn: " + round % 2 + " i = " + (index + i) + " x = " + countStonesInMuld + " skip\n")
-
         //check if last hole > gameboard
-        if (idx + i >= board.gameboard.length) {
-          val y: Int = (idx + i - board.gameboard.length) % 14
+        if (index + i >= board.gameboard.length) {
+          val y: Int = (index + i - board.gameboard.length) % 14
           board.gameboard(y + 1) += 1
-          idx += 1
+          index += 1
         } else {
-          board.gameboard(idx + i) += 1
+          board.gameboard(index + i) += 1
         }
       } else {
-        if (idx + i >= board.gameboard.length) {
-          val y: Int = (idx + i - board.gameboard.length) % 14
+        if (index + i >= board.gameboard.length) {
+          val y: Int = (index + i - board.gameboard.length) % 14
           board.gameboard(y) += 1
         } else {
-          board.gameboard(idx + i) += 1
+          board.gameboard(index + i) += 1
         }
       }
       if (i == countStonesInMuld) {
-        last = (idx + i) % 14
+        last = (index + i) % 14
       }
     }
 
