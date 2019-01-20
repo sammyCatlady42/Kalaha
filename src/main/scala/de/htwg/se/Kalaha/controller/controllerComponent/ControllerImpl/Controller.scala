@@ -1,19 +1,23 @@
-package de.htwg.se.Kalaha.controller
+package de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl
 
-import de.htwg.se.Kalaha.model.Gameboard
-import de.htwg.se.Kalaha.observer.Observable
+import de.htwg.se.Kalaha.controller.controllerComponent.ControllerInterface
+import de.htwg.se.Kalaha.model.gameboardController.GameboardImpl.Gameboard
+import de.htwg.se.Kalaha.util.{Observable, UndoManager}
 import de.htwg.se.Kalaha.view.gui.Gui
 import de.htwg.se.Kalaha.view.tui.Tui
 
-class Controller() extends Observable {
-  var round = 0
+class Controller() extends Observable with ControllerInterface{
   var board = new Gameboard
   var amountStones = 0
-  var undone = true
+  var undone = false
   var p1win = false
   var p2win = false
   val p1 = 7
   val p2 = 0
+  private val undoManager = new UndoManager
+
+  //val injector = Guice.createInjector(new GameboardModule)
+  //val fileIo = injector.instance[FileIOInterface]
 
   def controllerInit(amountStonesStart: Int): Unit = {
     amountStones = amountStonesStart
@@ -37,7 +41,7 @@ class Controller() extends Observable {
   def move(inputIndex: Int): Unit = {
     val index = inputIndex
     //print("index = " + index + "\n")
-    val turn = round % 2
+    val turn = board.round % 2
     //print("Turn = " + turn + "\n")
     var idx = index
     var last = 0
@@ -74,17 +78,17 @@ class Controller() extends Observable {
     notifyObservers
     checkExtra(last)
 
-    round += 1
+    board.round += 1
   }
 
   def collectEnemyStones(last: Int): Unit = {
     var own = false
-    if ((1 <= last) && (last <= 6) && round % 2 == 0) own = true
-    if ((8 <= last) && (last <= 13) && round % 2 == 1) own = true
-    print("\nown= " + own)
+    if ((1 <= last) && (last <= 6) && board.round % 2 == 0) own = true
+    if ((8 <= last) && (last <= 13) && board.round % 2 == 1) own = true
+    //print("\nown= " + own)
     if (own) {
       val idx = 14 - last
-      if (round % 2 == 0) {
+      if (board.round % 2 == 0) {
         board.gameboard(p1) += board.gameboard(idx)
         board.gameboard(p1) += board.gameboard(last)
         board.gameboard(idx) = 0
@@ -101,12 +105,12 @@ class Controller() extends Observable {
   def checkExtra(last: Int): Unit = {
     //checkWin()
     //print("checkExtra!\n")
-    if ((round % 2 == 1 && last == 0) || (round % 2 == 0 && last == 7)) {
+    if ((board.round % 2 == 1 && last == 0) || (board.round % 2 == 0 && last == 7)) {
       //print("New Turn")
       //tui.startTurn()
       //notifyObservers
 
-      round -= 1
+      board.round -= 1
       notifyObservers
     }
     if (board.gameboard(last) == 1) {
@@ -118,38 +122,28 @@ class Controller() extends Observable {
 
   def undo(): Unit = {
     if (undone) {
-      throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
-    } else {
-      val vBoard = new Gameboard
-      vBoard.gameboard = board.gameboard.clone()
-      board.gameboard = board.oldgb.clone()
-      board.oldgb = vBoard.gameboard.clone()
-      round -= 1
-      undone = true
-      print("undo \n")
-    }
+         throw new IllegalArgumentException("Es ist nur möglich einen Zug rückgängig zu machen")
+       } else {
+          val vBoard = new Gameboard
+          vBoard.gameboard = board.gameboard.clone()
+          board.gameboard = board.oldgb.clone()
+          board.oldgb = vBoard.gameboard.clone()
+          board.round -= 1
+          undone = true
+          print("undo \n")
+       }
+    //undoManager.undoStep
     notifyObservers
   }
 
   def redo(): Unit = {
-    if (!undone) {
-      print(undone)
-      throw new IllegalArgumentException("Kein REDO möglich")
-    } else {
-      val vBoard = new Gameboard
-      vBoard.gameboard = board.gameboard.clone()
-      board.gameboard = board.oldgb.clone()
-      board.oldgb = vBoard.gameboard.clone()
-      round += 1
-      print("redo \n")
-      undone = false
-    }
+    undoManager.redoStep
     notifyObservers
   }
 
   def reset(): Unit = {
     board.boardInit(amountStones)
-    round = 0
+    board.round = 0
     notifyObservers
   }
 
@@ -197,5 +191,10 @@ class Controller() extends Observable {
 
   def exit(): Unit = {
     sys.exit(0)
+  }
+
+  def save: Unit = {
+    //fileIo.save(Gameboard)
+
   }
 }

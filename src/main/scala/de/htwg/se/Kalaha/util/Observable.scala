@@ -1,4 +1,4 @@
-package de.htwg.se.Kalaha.observer
+package de.htwg.se.Kalaha.util
 
 trait Observer {
   def update()

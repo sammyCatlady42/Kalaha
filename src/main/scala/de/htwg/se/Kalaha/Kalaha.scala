@@ -1,6 +1,6 @@
 package de.htwg.se.Kalaha
 
-import de.htwg.se.Kalaha.controller.Controller
+import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controller
 
 object Kalaha {
         def main(args: Array[String]): Unit = {

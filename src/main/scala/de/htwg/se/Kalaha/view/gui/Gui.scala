@@ -2,9 +2,8 @@ package de.htwg.se.Kalaha.view.gui
 
 import java.awt.{Color, Font}
 
-import de.htwg.se.Kalaha.controller.Controller
-import de.htwg.se.Kalaha.observer.Observer
-import de.htwg.se.Kalaha.util.Point
+import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controller
+import de.htwg.se.Kalaha.util.{Observer, Point}
 
 import scala.language.postfixOps
 import scala.swing._
@@ -67,6 +66,9 @@ class Gui(controller: Controller) extends Frame with Observer {
         reset
         redraw()
       })
+      contents += new MenuItem(Action("Mit JSON speichern") {
+
+      })
       contents += new MenuItem(Action("Beenden") {
         exit()
       })
@@ -100,20 +102,6 @@ class Gui(controller: Controller) extends Frame with Observer {
   visible = true
   //redraw()
 
-  def label1: Label = new Label() {
-    //contents = text
-    if (controller.round % 2 == 0) {
-      //println("textfeld player 1")
-      background = Color.decode("#cc2023")
-      text = str
-    } else {
-      //println("textfeld player 2")
-      background = Color.decode("#6365ff")
-      text = "Spieler 2 ist am Zug"
-    }
-  }
-
-
   def gridPanel: GridPanel = new GridPanel(row, col) {
     preferredSize = new Dimension(600, 600)
     for (x <- 0 until row) {
@@ -144,27 +132,35 @@ class Gui(controller: Controller) extends Frame with Observer {
       y <- 0 until col
     } fieldButtons(x)(y).reactions += {
       case b: ButtonClicked =>
-        if (controller.round % 2 == 0) {
+        if (controller.board.round % 2 == 0) {
           if (x == 0) {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
-            controller.move(y + 1)
-            redraw()
+            if(controller.board.gameboard(y + 1) == 0) {
+              val dia = Dialog.showConfirmation(contents.head, "Feld darf nicht leer sein", "Hinweis", optionType = Dialog.Options.Default)
+            } else {
+              controller.move(y + 1)
+              redraw()
+            }
           }
 
-        } else if (controller.round % 2 == 1) {
+        } else if (controller.board.round % 2 == 1) {
           if (x == 1) {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
-            controller.move(13 - y)
-            redraw()
+            if(controller.board.gameboard(13 - y) == 0) {
+              val dia = Dialog.showConfirmation(contents.head, "Feld darf nicht leer sein", "Hinweis", optionType = Dialog.Options.Default)
+            } else {
+              controller.move(13 - y)
+              redraw()
+            }
           }
         }
     }
   }
 
   def redraw(): Unit = {
-    if (controller.round % 2 == 0) {
+    if (controller.board.round % 2 == 0) {
       textPanel.background = Color.decode("#cc2023")
       str = "Spieler 1 ist am Zug"
       textPanel.text_=(str)

@@ -1,6 +1,6 @@
 package scala.de.htwg.se.Kalaha.model
 
-import de.htwg.se.Kalaha.model.Gameboard
+import de.htwg.se.Kalaha.model.gameboardController.GameboardImpl.Gameboard
 import org.junit.runner.RunWith
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatest.junit.JUnitRunner

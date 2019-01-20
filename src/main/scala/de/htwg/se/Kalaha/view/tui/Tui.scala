@@ -1,7 +1,7 @@
 package de.htwg.se.Kalaha.view.tui
 
-import de.htwg.se.Kalaha.controller.Controller
-import de.htwg.se.Kalaha.observer.Observer
+import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controller
+import de.htwg.se.Kalaha.util.Observer
 
 class Tui(controller: Controller) extends Observer {
 
@@ -36,7 +36,7 @@ class Tui(controller: Controller) extends Observer {
   }
 
   def navigate(): Unit = {
-    val turn = controller.round % 2
+    val turn = controller.board.round % 2
     if (turn == 0) {
       print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.")
     } else {
@@ -77,7 +77,7 @@ class Tui(controller: Controller) extends Observer {
   }
 
   def startTurn(): Unit = {
-    var turn = controller.round % 2
+    var turn = controller.board.round % 2
     if (turn == 0) {
       print("\nSpieler " + Console.RED + "1 " + Console.RESET + "ist an der Reihe.")
     } else {
@@ -123,7 +123,7 @@ class Tui(controller: Controller) extends Observer {
   def checkInputIFValid(index: Int): Any = index match {
     case x if 1 until 6 + 1 contains x => {
       var idx = index
-      if (controller.round % 2 == 1) {
+      if (controller.board.round % 2 == 1) {
         idx += 7
       }
       if (controller.board.gameboard(idx) > 0) {
