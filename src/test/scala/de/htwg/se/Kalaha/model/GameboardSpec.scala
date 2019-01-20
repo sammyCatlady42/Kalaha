@@ -10,6 +10,24 @@ class GameboardSpec extends WordSpec with Matchers {
   "A GameBoard" when {
     val board = Gameboard()
     "initialized" should {
+      "new init" in {
+        board.boardInit()
+        board.toString should be("06666660666666")
+      }
+      "new init with 6" in {
+        board.boardInit(6)
+        board.toString should be("06666660666666")
+      }
+      "new init with 4" in {
+        board.boardInit(4)
+        board.toString should be("04444440444444")
+      }
+      "set with array" in {
+        var startboard: Array[Int] = Array[Int](15, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1)
+        board.setBoard(startboard)
+        board.toString should be("151111110111111")
+      }
+
       "have empty space" in {
         print("Feld " + 0 + "-- Inhalt " + board.startboard(0) + "\n")
         board.startboard(0) should be(0)
