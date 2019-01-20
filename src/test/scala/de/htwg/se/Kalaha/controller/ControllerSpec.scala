@@ -1,7 +1,6 @@
 package scala.de.htwg.se.Kalaha.controller
 
 import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controller
-import de.htwg.se.Kalaha.model.gameboardController.GameboardImpl.Gameboard
 import org.junit.runner.RunWith
 import org.scalatest._
 import org.scalatest.junit.JUnitRunner
