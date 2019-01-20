@@ -37,7 +37,7 @@ class Gui(controller: Controller) extends Frame with Observer {
 
   val kalaha1: TextField = new TextField() {
     font = new Font("Arial", 0, 150)
-    //editable = false
+    editable = false
     background = Color.decode("#cc2023")
     text = controller.board.gameboard(controller.p1).toString
     preferredSize = new Dimension(200, 600)
@@ -49,7 +49,7 @@ class Gui(controller: Controller) extends Frame with Observer {
     //print("p2: " + controller.board.gameboard(0).toString)
     text = controller.board.gameboard(0).toString
     preferredSize = new Dimension(200, 600)
-    //editable = false
+    editable = false
   }
 
   contents = new BorderPanel {
@@ -149,8 +149,6 @@ class Gui(controller: Controller) extends Frame with Observer {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(y + 1)
-            //publish(b)
-
             redraw()
           }
 
@@ -159,8 +157,6 @@ class Gui(controller: Controller) extends Frame with Observer {
             val dia = Dialog.showConfirmation(contents.head, "Falscher Spieler", "Hinweis", optionType = Dialog.Options.Default)
           } else {
             controller.move(13 - y)
-            //redraw()
-            //publish(b)
             redraw()
           }
         }
@@ -181,15 +177,9 @@ class Gui(controller: Controller) extends Frame with Observer {
       fieldButtons(0)(x).text = "" + controller.board.gameboard(13 - x)
       fieldButtons(1)(x).text = "" + controller.board.gameboard(x + 1)
     }
-    kalaha1.text = controller.board.gameboard(7).toString
-    //kalaha1.repaint()
+    kalaha1.text = controller.board.gameboard(controller.p1).toString
     kalaha2.text = "" + controller.board.gameboard(0)
-    //kalaha2.repaint()
 
-
-    //textPanel.text = "test"
-
-    //println("repaint")
     repaint
   }
 
