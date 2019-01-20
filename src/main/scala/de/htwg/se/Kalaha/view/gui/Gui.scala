@@ -67,7 +67,10 @@ class Gui(controller: Controller) extends Frame with Observer {
         redraw()
       })
       contents += new MenuItem(Action("Mit JSON speichern") {
-
+        controller.save
+      })
+      contents += new MenuItem(Action("Spielregeln") {
+        help()
       })
       contents += new MenuItem(Action("Beenden") {
         exit()
@@ -213,5 +216,17 @@ class Gui(controller: Controller) extends Frame with Observer {
   override def update(): Unit = {
     checkWin()
     redraw()
+  }
+
+  def help(): Unit = {
+    var str = "je 6 (oder 4) Kugeln werden in die 12 kleinen Mulden gelegt \n\n Gewinner ist, wer bei Spielende die meisten Kugeln in seinem Kalaha hat.\n\n"
+    str += "Wer am Zuge ist, leert eine seiner Mulden und verteilt die Kugeln, jeweils eine, reihum im Gegenuhrzeigersinn in die nachfolgenden Mulden. "
+    str += "Dabei wird auch das eigene Kalaha gefüllt. Das Gegner Kalaha wird ausgelassen.\n\n"
+    str += "Fällt die letzte Kugel ins eigene Kalaha, ist der Spieler nochmals am Zuge.\n\n"
+    str += "Fällt die letzte Kugel in eine leere Mulde auf der eigenen Seite,  "
+    str += "wird diese Kugel und alle Kugeln in der Gegner Mulde gegenüber, ins eigene Kalaha "
+    str += "gelegt und der Gegner hat den nächsten Zug.\n\n"
+    str += "Das Spiel ist beendet, wenn alle Mulden eines Spielers leer sind. Der Gegner bekommt dann alle Kugeln aus seinen Mulden in sein Kalaha.\n\n"
+    val dia = Dialog.showConfirmation(contents.head, str, "Spielregeln", optionType = Dialog.Options.Default)
   }
 }

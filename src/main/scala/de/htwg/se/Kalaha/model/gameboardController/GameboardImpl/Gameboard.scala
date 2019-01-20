@@ -1,6 +1,7 @@
 package de.htwg.se.Kalaha.model.gameboardController.GameboardImpl
 
 import de.htwg.se.Kalaha.model.gameboardController.GameboardInterface
+import play.api.libs.json._
 
 case class Gameboard() extends GameboardInterface {
   var round = 0
@@ -34,14 +35,32 @@ case class Gameboard() extends GameboardInterface {
     s
   }
 
-  /*def toJson:JsValue = {
+  def toJson:JsValue = {
     Json.obj(
       "gameboard" -> Json.obj(
         "round" -> JsNumber(round),
-        "board" -> JsValue(
-          gameboard
+        "board" -> Json.arr(
+          Json.obj(
+            "0" -> gameboard(0),
+            "1" -> gameboard(1),
+            "2" -> gameboard(2),
+            "3" -> gameboard(3),
+            "4" -> gameboard(4),
+            "5" -> gameboard(5),
+            "6" -> gameboard(6),
+            "7" -> gameboard(7),
+            "8" -> gameboard(8),
+            "9" -> gameboard(9),
+            "10" -> gameboard(10),
+            "11" -> gameboard(11),
+            "12" -> gameboard(12),
+            "13" -> gameboard(13),
+
+
+          )
+          //gameboard
         )
       )
     )
-  }*/
+  }
 }

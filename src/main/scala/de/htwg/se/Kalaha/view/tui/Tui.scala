@@ -55,6 +55,7 @@ class Tui(controller: Controller) extends Observer {
     }
     input match {
       case "option" => askForAmountStonesStart()
+      case "help" => help()
       case "p" => startTurn()
       case "undo" => {
         try {
@@ -146,6 +147,16 @@ class Tui(controller: Controller) extends Observer {
     print(s)
   }
 
+  def help(): Unit = {
+    print("je 6 (oder 4) Kugeln werden in die 12 kleinen Mulden gelegt \n\n Gewinner ist, wer bei Spielende die meisten Kugeln in seinem Kalaha hat.\n\n"
+      + "Wer am Zuge ist, leert eine seiner Mulden und verteilt die Kugeln, jeweils eine, reihum im Gegenuhrzeigersinn in die nachfolgenden Mulden. "
+      + "Dabei wird auch das eigene Kalaha gefüllt. Das Gegner Kalaha wird ausgelassen.\n\n"
+      + "Fällt die letzte Kugel ins eigene Kalaha, ist der Spieler nochmals am Zuge.\n\n"
+      + "Fällt die letzte Kugel in eine leere Mulde auf der eigenen Seite,  wird diese Kugel und alle Kugeln in der Gegner Mulde gegenüber, ins eigene Kalaha "
+      + "gelegt und der Gegner hat den nächsten Zug.\n\n"
+      + "Das Spiel ist beendet, wenn alle Mulden eines Spielers leer sind. Der Gegner bekommt dann alle Kugeln aus seinen Mulden in sein Kalaha.\n\n")
+  }
+
   def showGameboard(): Unit = {
     var board = controller.board
 
@@ -187,6 +198,7 @@ class Tui(controller: Controller) extends Observer {
   def printHelp(): Unit = {
     print("\nMögliche Eingaben:\n")
     print("     p => Zug des aktuellen Spielers starten\n")
+    print("     help => Spielregeln\n")
     print("     option => Feld mit four oder 6 Kugeln\n")
     print("     show => Anzeigen des Spielfelds\n")
     print("     undo => Letzten Zug rückgängig machen\n")
