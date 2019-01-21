@@ -66,7 +66,7 @@ class Gui(controller: Controller) extends Frame with Observer {
         reset
         redraw()
       })
-      contents += new MenuItem(Action("Mit JSON speichern") {
+      contents += new MenuItem(Action("Als JSON speichern") {
         controller.save
       })
       contents += new MenuItem(Action("Spiel laden") {
