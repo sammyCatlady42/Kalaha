@@ -1,8 +1,8 @@
 package de.htwg.se.Kalaha.model.fileIoComponent.fileIoJsonImpl
 
 import java.io.{File, PrintWriter}
-
 import de.htwg.se.Kalaha.controller.controllerComponent.ControllerImpl.Controller
+import de.htwg.se.Kalaha.controller.controllerComponent.ControllerInterface
 import de.htwg.se.Kalaha.model.fileIoComponent.FileIOInterface
 import de.htwg.se.Kalaha.model.gameboardController.GameboardImpl.Gameboard
 import play.api.libs.json.{JsValue, Json}
@@ -10,41 +10,40 @@ import play.api.libs.json.{JsValue, Json}
 import scala.io.Source
 
 class FileIO extends FileIOInterface {
+  var round = 0
+  var boardArray = new Array[Int](14)
 
-  override def load(Controller: Controller): Unit = {
-    val source: String = Source.fromFile("board.json").getLines.mkString
-    val json: JsValue = Json.parse(source)
+  override def load(controller: Controller): Unit = {
+    val source1: String = Source.fromFile("D:\\board.json").getLines.mkString
+    val json1: JsValue = Json.parse(source1)
+    loadRound(json1, controller)
+    loadBoard(json1, controller)
+    controller.board.round = round
+    controller.board.setBoard(boardArray)
 
-    val round = (json \ "gameboard" \ "round").get.toString().toInt
-    val boardjson = Json.parse("" + (json \ "gameboard" \\ "board").head + "")
-    val test = boardjson.validate[List[JsValue]].get
-    var x = 0
-    var field = new Array[Int](14)
-    for (i <- test) {
-      print(i + " x : " + x)
-      val t = (i \ x).get.toString().toInt
-      field(x) = t
-      x = x + 1
-    }
-    Controller.board.round = round
-    Controller.board.setBoard(field)
-    //val board: List[JsValue] = Json.parse(boardjson).as[List[JsValue]]
-    //val eins = board.
-    /*val zwei = (json \ "gameboard" \ "board" \ "2").get.toString().toInt
-    val drei = (json \ "gameboard" \ "board" \ "3").get.toString().toInt
-    val vier = (json \ "gameboard" \ "board" \ "4").get.toString().toInt
-    val fünf = (json \ "gameboard" \ "board" \ "5").get.toString().toInt
-    val sechs = (json \ "gameboard" \ "board" \ "6").get.toString().toInt*/
-
-    print("Was Geht " + round )
-    Controller.notifyObservers
-
+    controller.notifyObservers
   }
 
-  override def save(board: Gameboard) : Unit = {
-    val pw = new PrintWriter(new File("board.json"))
+  def loadRound(json: JsValue, controller: ControllerInterface): Unit = {
+    round = (json \ "gameboard" \ "round").get.toString().toInt
+  }
+
+  def loadBoard(json: JsValue, controller: ControllerInterface): Unit = {
+    val board = (json \ "gameboard" \ "board").get.toString()
+    val jsonList: List[JsValue] = Json.parse(board).as[List[JsValue]]
+
+    for (feld <- jsonList) {
+      for (i: Int <- 0 until 14) {
+        boardArray(i) = (feld \ i.toString).get.toString().toInt
+      }
+    }
+  }
+
+  override def save(board: Gameboard): Unit = {
+    val pw = new PrintWriter(new File("D:\\board.json"))
     pw.write(Json.prettyPrint(board.toJson).toString)
-    pw.close
+    pw.close()
+    print("Spielstand wurde als Json gespeichert.")
   }
 
   //def boardToJson(board: Gameboard) = board.toJson
